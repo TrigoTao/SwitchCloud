@@ -1,0 +1,16 @@
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+             version="2.0">
+  <persistence-unit name="scEntityManager" transaction-type="RESOURCE_LOCAL">
+    <provider>org.hibernate.ejb.HibernatePersistence</provider>
+	    <class>bupt.sc.keystone.model.UserInfo</class>
+	    <class>bupt.sc.neutron.model.SubnetInfo</class>
+	    <exclude-unlisted-classes>true</exclude-unlisted-classes>
+	    
+	    <properties>
+	       <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect"/>
+	       <property name="hibernate.hbm2ddl.auto" value="update"/>
+	    </properties>
+  </persistence-unit>
+</persistence>
