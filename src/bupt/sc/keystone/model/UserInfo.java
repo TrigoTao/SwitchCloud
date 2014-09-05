@@ -63,4 +63,10 @@ public class UserInfo {
 	public void setUserState(Integer userState) {
 		this.userState = userState;
 	}
+
+	@Override
+	public String toString() {
+		return "UserInfo [id=" + id + ", userName=" + userName + ", pwd=" + pwd
+				+ ", userType=" + userType + ", userState=" + userState + "]";
+	}
 }

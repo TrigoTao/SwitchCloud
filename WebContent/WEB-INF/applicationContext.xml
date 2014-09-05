@@ -9,12 +9,27 @@
 	 http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
 
   <bean id="userInfoServiceImpl" class="bupt.sc.keystone.serviceImpl.UserInfoServiceImpl"></bean>
+  <bean id="subnetInfoServiceImpl" class="bupt.sc.neutron.serviceImpl.SubnetInfoServiceImpl"></bean>
+  <bean id="vNodeInfoServiceImpl" class="bupt.sc.nova.serviceImpl.VNodeInfoServiceImpl"></bean>
 
+  <!-- keystone -->
   <bean id="auth" class="bupt.sc.keystone.impl.AuthenticationImpl" scope="prototype">
     <property name="userInfoService" ref="userInfoServiceImpl"></property>
   </bean>
   <bean id="userManager" class="bupt.sc.keystone.impl.UserManagerImpl" scope="prototype">
     <property name="userInfoService" ref="userInfoServiceImpl"></property>
+  </bean>
+  
+  <!-- neutron -->
+  <bean id="subnetManager" class="bupt.sc.neutron.impl.SubnetManagerImpl" scope="prototype">
+    <property name="subnetInfoService" ref="subnetInfoServiceImpl"></property>
+    <property name="userInfoService" ref="userInfoServiceImpl"></property>
+  </bean>
+  
+  <!-- nova -->
+  <bean id="vNodeManager" class="bupt.sc.nova.impl.VNodeManagerImpl" scope="prototype">
+    <property name="vNodeInfoService" ref="vNodeInfoServiceImpl"></property>
+    <property name="subnetInfoService" ref="subnetInfoServiceImpl"></property>
   </bean>
   
 <!-- database -->

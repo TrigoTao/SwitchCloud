@@ -25,7 +25,7 @@ public class SubnetInfoServiceImpl implements SubnetInfoService {
 
 	@Override
 	public SubnetInfo getSubnet(int subnetId) {
-		return entityManager.getReference(SubnetInfo.class, subnetId);
+		return entityManager.find(SubnetInfo.class, subnetId);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -33,6 +33,11 @@ public class SubnetInfoServiceImpl implements SubnetInfoService {
 	public List<SubnetInfo> getAllSubnets() {
 		Query query = entityManager.createQuery("select e from SubnetInfo e");
 		return query.getResultList();
+	}
+	
+	@Override
+	public void saveSubnetInfo(SubnetInfo subnetInfo) {
+		if(subnetInfo.getId() !=  null) entityManager.merge(subnetInfo); else entityManager.persist(subnetInfo);
 	}
 
 }

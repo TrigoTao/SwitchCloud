@@ -13,12 +13,11 @@ import bupt.sc.keystone.model.UserInfo;
 
 @Entity
 public class SubnetInfo {
-	public static final int STATE_LOGOUT = 0;
-	public static final int STATE_LOGIN  = 1;
+	public static final Integer STATE_CREATING = 0;
 	
 	@Id
 	@GeneratedValue
-	private int id;
+	private Integer id;
 	
 	@ManyToOne @NotNull
     @JoinColumn(name = "userId")
@@ -26,12 +25,12 @@ public class SubnetInfo {
 	@NotNull
 	private String userName;
 	@NotNull
-	private String state;
+	private Integer state;
 	@NotNull
 	private Date createTime;
 	private Date modifyTime;
 	
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 	public void setId(int id) {
@@ -49,10 +48,10 @@ public class SubnetInfo {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-	public String getState() {
+	public Integer getState() {
 		return state;
 	}
-	public void setState(String state) {
+	public void setState(Integer state) {
 		this.state = state;
 	}
 	public Date getCreateTime() {
@@ -66,5 +65,12 @@ public class SubnetInfo {
 	}
 	public void setModifyTime(Date modifyTime) {
 		this.modifyTime = modifyTime;
+	}
+	
+	@Override
+	public String toString() {
+		return "SubnetInfo [id=" + id + ", user=" + user + ", userName="
+				+ userName + ", state=" + state + ", createTime=" + createTime
+				+ ", modifyTime=" + modifyTime + "]";
 	}
 }
