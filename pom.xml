@@ -94,9 +94,9 @@
     
     <!-- yaml -->
     <dependency>
-			<groupId>org.yaml</groupId>
-			<artifactId>snakeyaml</artifactId>
-			<version>1.13</version>
+	<groupId>org.yaml</groupId>
+	<artifactId>snakeyaml</artifactId>
+	<version>1.13</version>
     </dependency>
     
     <!-- axis(may deprecate in the future) -->
