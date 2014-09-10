@@ -1,5 +1,7 @@
 package bupt.sc.nova.api;
 
+import java.io.FileNotFoundException;
+
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,7 +20,7 @@ public class VNodeManagerTest {
 	}
 
 	@Test
-	public void testAddVNode(){
+	public void testAddVNode() throws FileNotFoundException{
 		int res = client.addVNode("SCSCF", 0);
 		Assert.assertEquals(-1, res);
 		res = client.addVNode("SCSCF", 1);

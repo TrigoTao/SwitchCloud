@@ -92,6 +92,13 @@
       <version>4.11</version>
     </dependency>
     
+    <!-- yaml -->
+    <dependency>
+			<groupId>org.yaml</groupId>
+			<artifactId>snakeyaml</artifactId>
+			<version>1.13</version>
+    </dependency>
+    
     <!-- axis(may deprecate in the future) -->
     <dependency>
       <groupId>org.apache.axis</groupId>
@@ -107,9 +114,7 @@
       <groupId>commons-discovery</groupId>
       <artifactId>commons-discovery</artifactId>
       <version>0.4</version>
-    </dependency>
-				
-		    
+    </dependency>	    
   </dependencies>
   
   <build>
