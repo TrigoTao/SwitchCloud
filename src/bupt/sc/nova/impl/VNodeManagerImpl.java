@@ -29,11 +29,15 @@ import bupt.sc.utils.ConfigInstance;
 
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @WebService
 public class VNodeManagerImpl implements VNodeManager {
 	private VNodeInfoService vNodeInfoService;
 	private SubnetInfoService subnetInfoService;
+	
+	private final Logger logger = LogManager.getLogger(VNodeManagerImpl.class.getName()); 
 	
 	public VNodeInfoService getvNodeInfoService() {
 		return vNodeInfoService;
@@ -66,7 +70,7 @@ public class VNodeManagerImpl implements VNodeManager {
 			CloudConfig cc = ConfigInstance.getCloudConfig();
 			String targetEendPoint = "http://" + cc.getCloudIp() +":8081/axis/services/IVirtualNetManager";
 	
-			System.out.println("[Cloud Debug] targetEendPoint= " + targetEendPoint);
+			logger.debug("[Cloud Debug] targetEendPoint= " + targetEendPoint);
 			Service service = new Service();
 			Call call;
 			try {
@@ -94,7 +98,7 @@ public class VNodeManagerImpl implements VNodeManager {
 				vNodeInfo.setState(VNodeInfo.STATE_START);
 				vNodeInfoService.saveVNodeInfo(vNodeInfo);
 			} catch (Exception e) {
-				System.out.println("/n Exception at VNodeManager.addVNode /n");
+				logger.error("/n Exception at VNodeManager.addVNode /n");
 				e.printStackTrace();
 			}
 			

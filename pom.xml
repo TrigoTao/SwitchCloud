@@ -9,6 +9,7 @@
     <spring.version>3.2.4.RELEASE</spring.version>
     <hibernate.core.version>4.2.5.Final</hibernate.core.version>
     <cxf.version>2.7.12</cxf.version>
+    <log4j.version>2.0.2</log4j.version>
   </properties>
   
   <dependencies>
@@ -97,6 +98,17 @@
 			<groupId>org.yaml</groupId>
 			<artifactId>snakeyaml</artifactId>
 			<version>1.13</version>
+    </dependency>
+    <!-- log -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>${log4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <version>${log4j.version}</version>
     </dependency>
     
     <!-- axis(may deprecate in the future) -->
