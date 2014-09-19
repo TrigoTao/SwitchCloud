@@ -6,7 +6,13 @@
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
 	    <class>bupt.sc.keystone.model.UserInfo</class>
 	    <class>bupt.sc.neutron.model.SubnetInfo</class>
+	    
 	    <class>bupt.sc.nova.model.VNodeInfo</class>
+	    <class>bupt.sc.nova.model.VRDEPort</class>
+	    <class>bupt.sc.nova.model.VNNodeInfo</class>
+	    <class>bupt.sc.nova.model.HMInfoService</class>
+	    <class>bupt.sc.nova.model.VNVdiInfo</class>
+	    <class>bupt.sc.nova.model.IpInfo</class>
 	    <exclude-unlisted-classes>true</exclude-unlisted-classes>
 	    
 	    <properties>

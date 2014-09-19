@@ -17,6 +17,7 @@ public class VNodeManagerTest {
 		factory.setServiceClass(VNodeManager.class);
 		factory.setAddress(addr);
 		client = (VNodeManager) factory.create();
+		//client = (VNodeManager)getRemoteT(addr, VNodeManagerTest.class);
 	}
 
 	@Test

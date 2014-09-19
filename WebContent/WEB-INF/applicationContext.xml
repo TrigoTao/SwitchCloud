@@ -11,6 +11,9 @@
   <bean id="userInfoServiceImpl" class="bupt.sc.keystone.serviceImpl.UserInfoServiceImpl"></bean>
   <bean id="subnetInfoServiceImpl" class="bupt.sc.neutron.serviceImpl.SubnetInfoServiceImpl"></bean>
   <bean id="vNodeInfoServiceImpl" class="bupt.sc.nova.serviceImpl.VNodeInfoServiceImpl"></bean>
+  <bean id="vrdePortServiceImpl" class="bupt.sc.nova.serviceImpl.VRDEPortServiceImpl"></bean>
+  <bean id="vnNodeInfoServiceImpl" class="bupt.sc.nova.serviceImpl.VNNodeInfoServiceImpl"></bean>
+  <bean id="hmInfoServiceImpl" class="bupt.sc.nova.serviceImpl.HMInfoServiceImpl"></bean>
 
   <!-- keystone -->
   <bean id="auth" class="bupt.sc.keystone.impl.AuthenticationImpl" scope="prototype">
@@ -31,13 +34,22 @@
     <property name="vNodeInfoService" ref="vNodeInfoServiceImpl"></property>
     <property name="subnetInfoService" ref="subnetInfoServiceImpl"></property>
   </bean>
+  <bean id="vBoxManager" class="bupt.sc.nova.vm.VBoxManager" scope="prototype">
+    <property name="vrdePortService" ref="vrdePortServiceImpl"></property>
+    <property name="vnNodeInfoService" ref="vnNodeInfoServiceImpl"></property>
+  </bean>
+  <bean id="iVirtualManager" class="bupt.sc.nova.impl.IVirtualManagerImpl" scope="prototype">
+  </bean>
+  <bean id="iCloudManager" class="bupt.sc.nova.impl.ICloudManagerImpl" scope="prototype">
+    <property name="hmInfoServie" ref="hmInfoServiceImpl"></property>
+  </bean>
   
 <!-- database -->
   <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
   
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 	  <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-	  <property name="url" value="jdbc:mysql://localhost:3306/networkingdb"/>
+	  <property name="url" value="jdbc:mysql://localhost:3306/SwitchCloud"/>
 	  <property name="username" value="root"/>
 	  <property name="password" value="root"/>
 	</bean> 
