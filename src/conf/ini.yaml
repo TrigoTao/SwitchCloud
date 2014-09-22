@@ -4,3 +4,4 @@ scpritsHome: /home/jiaohuan/iaas/
 vmType: vBox
 nodeServiceSuffix: :8080/SwitchCloud/webservices/nova/ivm
 cloudServiceSuffix: :8080/SwitchCloud/webservices/nova/icm
+virtualNetServiceSuffix: :8080/SwitchCloud/webservices/nova/ivnm

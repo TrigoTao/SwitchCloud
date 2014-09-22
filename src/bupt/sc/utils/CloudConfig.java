@@ -6,6 +6,7 @@ public class CloudConfig {
 	private String vmType;
 	private String nodeServiceSuffix;
 	private String cloudServiceSuffix;
+	private String virtualNetServiceSuffix;
 
 	public String getCloudIp() {
 		return cloudIp;
@@ -47,10 +48,20 @@ public class CloudConfig {
 		this.cloudServiceSuffix = cloudServiceSuffix;
 	}
 
+	public String getVirtualNetServiceSuffix() {
+		return virtualNetServiceSuffix;
+	}
+
+	public void setVirtualNetServiceSuffix(String virtualNetServiceSuffix) {
+		this.virtualNetServiceSuffix = virtualNetServiceSuffix;
+	}
+
 	@Override
 	public String toString() {
 		return "CloudConfig [cloudIp=" + cloudIp + ", scpritsHome="
 				+ scpritsHome + ", vmType=" + vmType + ", nodeServiceSuffix="
-				+ nodeServiceSuffix + ", cloudServiceSuffix=" + cloudServiceSuffix + "]";
+				+ nodeServiceSuffix + ", cloudServiceSuffix="
+				+ cloudServiceSuffix + ", virtualNetServiceSuffix="
+				+ virtualNetServiceSuffix + "]";
 	}
 }

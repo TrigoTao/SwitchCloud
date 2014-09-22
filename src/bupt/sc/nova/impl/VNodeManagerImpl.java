@@ -20,12 +20,14 @@ import org.apache.axis.client.Service;
 
 import bupt.sc.neutron.model.SubnetInfo;
 import bupt.sc.neutron.service.SubnetInfoService;
+import bupt.sc.nova.api.IVirtualNetManager;
 import bupt.sc.nova.api.VNodeManager;
 import bupt.sc.nova.model.VNodeInfo;
 import bupt.sc.nova.service.VNodeInfoService;
 import bupt.sc.nova.statistic.VNodeInfoIaaS;
 import bupt.sc.utils.CloudConfig;
 import bupt.sc.utils.ConfigInstance;
+import bupt.sc.utils.CoreUtil;
 
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
@@ -68,9 +70,10 @@ public class VNodeManagerImpl implements VNodeManager {
 			vNodeInfoService.saveVNodeInfo(vNodeInfo);
 			
 			CloudConfig cc = ConfigInstance.getCloudConfig();
-			String targetEendPoint = "http://" + cc.getCloudIp() +":8081/axis/services/IVirtualNetManager";
+			String targetEendPoint = "http://" + cc.getCloudIp() + cc.getVirtualNetServiceSuffix();
 	
 			logger.debug("[Cloud Debug] targetEendPoint= " + targetEendPoint);
+			IVirtualNetManager ivNetManager = CoreUtil.getRemoteT(targetEendPoint, IVirtualNetManager.class);
 			Service service = new Service();
 			Call call;
 			try {

@@ -14,6 +14,8 @@
   <bean id="vrdePortServiceImpl" class="bupt.sc.nova.serviceImpl.VRDEPortServiceImpl"></bean>
   <bean id="vnNodeInfoServiceImpl" class="bupt.sc.nova.serviceImpl.VNNodeInfoServiceImpl"></bean>
   <bean id="hmInfoServiceImpl" class="bupt.sc.nova.serviceImpl.HMInfoServiceImpl"></bean>
+  <bean id="vnVdiInfoServiceImpl" class="bupt.sc.nova.serviceImpl.VNVdiInfoServiceImpl"></bean>
+  <bean id="ipInfoServiceImpl" class="bupt.sc.nova.serviceImpl.IpInfoServiceImpl"></bean>
 
   <!-- keystone -->
   <bean id="auth" class="bupt.sc.keystone.impl.AuthenticationImpl" scope="prototype">
@@ -42,6 +44,11 @@
   </bean>
   <bean id="iCloudManager" class="bupt.sc.nova.impl.ICloudManagerImpl" scope="prototype">
     <property name="hmInfoServie" ref="hmInfoServiceImpl"></property>
+  </bean>
+  <bean id="iVirtualNetManager" class="bupt.sc.nova.impl.IVirtualNetManagerImpl" scope="prototype">
+    <property name="vnNodeInfoService" ref="vnNodeInfoServiceImpl"></property>
+    <property name="vnVdiInfoService" ref="vnVdiInfoServiceImpl"></property>
+    <property name="ipInfoService" ref="ipInfoServiceImpl"></property>
   </bean>
   
 <!-- database -->

@@ -12,4 +12,5 @@
 	<jaxws:endpoint id="novaNodeM" implementor="#vNodeManager" address="/nova/vnm"/>
 	<jaxws:endpoint id="iVManager" implementor="#iVirtualManager" address="/nova/ivm"/>
 	<jaxws:endpoint id="iCManager" implementor="#iCloudManager" address="/nova/icm"/>
+	<jaxws:endpoint id="iVNManager" implementor="#iVirtualNetManager" address="/nova/ivnm"/>
 </beans>
