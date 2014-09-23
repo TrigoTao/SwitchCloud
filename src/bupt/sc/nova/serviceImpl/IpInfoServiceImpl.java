@@ -39,8 +39,8 @@ public class IpInfoServiceImpl implements IpInfoService {
 	@Override
 	public String leaseIp() {
 		String allocatedIp = null;
-		List<IpInfo> ipInfos = entityManager.createQuery("SELECT e FROM IpInfo e where status =" + IpInfo.STATE_FREE, IpInfo.class)
-								.getResultList();
+		List<IpInfo> ipInfos = entityManager.createQuery("SELECT e FROM IpInfo e where status =:state", IpInfo.class)
+								.setParameter("state", IpInfo.STATE_FREE).getResultList();
 		if(!ipInfos.isEmpty())
 			allocatedIp = ipInfos.get(0).getIp();
 		return allocatedIp;

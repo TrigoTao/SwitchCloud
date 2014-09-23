@@ -20,7 +20,6 @@ import bupt.sc.nova.model.VNVdiInfo;
 import bupt.sc.nova.service.IpInfoService;
 import bupt.sc.nova.service.VNNodeInfoService;
 import bupt.sc.nova.service.VNVdiInfoService;
-import bupt.sc.nova.statistic.VNodeInfoIaaS;
 import bupt.sc.utils.CloudConfig;
 import bupt.sc.utils.ConfigInstance;
 import bupt.sc.utils.CoreUtil;
@@ -60,7 +59,7 @@ public class IVirtualNetManagerImpl implements IVirtualNetManager{
 	@Override
 	public VNNodeInfo addVNodeToIaaS(String nodeType, int subnetId) {
 		
-		VNNodeInfo vnNodeInfo = new VNNodeInfo();
+		VNNodeInfo vnNodeInfo = null;
 		
 		try {
 			Calendar calendar = Calendar.getInstance();
@@ -99,6 +98,7 @@ public class IVirtualNetManagerImpl implements IVirtualNetManager{
 					// Get vdi on which it spawns
 					String resultVDIID = iVirtualManager.getVDIIDbyVMID(resultVMID);
 					
+					vnNodeInfo = new VNNodeInfo();
 					// vnInfo.setSubnetId(subnetId);
 					if (resultVDIID != null) {
 						vnNodeInfo.setNodeId(resultVMID);
@@ -151,6 +151,9 @@ public class IVirtualNetManagerImpl implements IVirtualNetManager{
 					}
 				}
 			}
+			else{
+				logger.error("No available ip");
+			}
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -177,7 +180,7 @@ public class IVirtualNetManagerImpl implements IVirtualNetManager{
 	}
 
 	@Override
-	public VNodeInfoIaaS checkVNodeInIaaS(String nodeId) {
+	public VNNodeInfo checkVNodeInIaaS(String nodeId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
