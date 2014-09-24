@@ -52,7 +52,7 @@ public class ICloudManagerImpl implements ICloudManager {
 	public String ChooseHM() {
 		int runningVMNo = 0;
     	int bestNodeVMNo = Integer.MAX_VALUE;
-    	String bestNodeIP = null;
+    	String bestHMIP = null;
 		try{
 			CloudConfig cc = ConfigInstance.getCloudConfig();
 			List<String> hmIps = listHMIp(); 
@@ -64,11 +64,11 @@ public class ICloudManagerImpl implements ICloudManager {
 					runningVMNo = vmIDs.size();
 					if(bestNodeVMNo > runningVMNo){
 						bestNodeVMNo = runningVMNo;
-						bestNodeIP = ip;
+						bestHMIP = ip;
 					}
 				}
 				else{
-					bestNodeIP = ip;
+					bestHMIP = ip;
 					break;
 				}
 			}
@@ -76,7 +76,7 @@ public class ICloudManagerImpl implements ICloudManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return bestNodeIP;
+		return bestHMIP;
 	}
 
 	@Override

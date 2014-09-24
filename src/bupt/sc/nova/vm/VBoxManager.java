@@ -23,8 +23,6 @@ import bupt.sc.utils.SCPath;
 /**
  * Use CLI VBoxManage to handle VirtualBox
  * 
- * @author chenzhuo
- * 
  */
 public class VBoxManager implements VMOperationManager {
 	private final Logger logger = LogManager.getLogger(VMOperationManager.class.getName()); 
@@ -1088,10 +1086,17 @@ public class VBoxManager implements VMOperationManager {
 		String line = null;
 		try {
 			// Request a unique vrde port
+			
+			//logger.debug(vrdePortService);
 			vrdeport = vrdePortService.leasePort();
+			if(vrdeport == -1){
+				logger.error("startVM  --> no vrdeport");
+				return null;
+			}
 			/**
 			 * Create, Register and Start a VM
 			 */
+			logger.debug(scHome);
 			if (nodeType.equals("MS")) {
 				p = Runtime.getRuntime().exec(scHome + File.separatorChar + "scripts/startVMwin7 " + name + " " + MemInM + " " + cpu + " " + VDI_UUID + " " + vrdeport + " " + StaticIp);
 			} else {
@@ -1118,6 +1123,7 @@ public class VBoxManager implements VMOperationManager {
 			}
 			String result = buff.toString();
 
+			logger.debug("----------------------");
 			if (result.contains("ERROR") || result.contains("error")) {
 				System.out.println("[ERROR][VM Creating] " + result);
 				// FileOperationImpl.releasePort(scHome, "vrdp.pool",

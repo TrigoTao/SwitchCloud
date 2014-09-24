@@ -10,6 +10,9 @@ public class ConfigInstance{
 	private final static String confRoot = File.separator + "conf";
 	private static CloudConfig cloudConfig = null;
 	
+	/**
+	 *  The method will only read the file one time.
+	 */
 	public static CloudConfig getCloudConfig() throws FileNotFoundException{
 		if(null == cloudConfig){
 			Yaml yaml = new Yaml(); 

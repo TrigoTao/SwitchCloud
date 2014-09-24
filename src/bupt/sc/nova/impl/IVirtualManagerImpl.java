@@ -11,8 +11,23 @@ import bupt.sc.nova.vm.VMOperationManager;
 
 @WebService
 public class IVirtualManagerImpl implements IVirtualManager {
-	private VMOperationManager vmOperationManager = VMOManagerFactory.getVMOperationManager();
+	private VMOManagerFactory vmoManagerFactory;
+	private VMOperationManager vmOperationManager;
+	//private VMOperationManager vmOperationManager = VMOManagerFactory.getVMOperationManager();
 
+	public VMOManagerFactory getVmoManagerFactory() {
+		return vmoManagerFactory;
+	}
+
+	public void setVmoManagerFactory(VMOManagerFactory vmoManagerFactory) {
+		this.vmoManagerFactory = vmoManagerFactory;
+		setVmOperationManager(vmoManagerFactory.getVmOperationManager());
+	}
+
+	private void setVmOperationManager(VMOperationManager vmOperationManager) {
+		this.vmOperationManager = vmOperationManager;
+	}
+	
 	@Override
 	public List<String> listVDIID() {
 		return vmOperationManager.listVDIID();
@@ -176,6 +191,7 @@ public class IVirtualManagerImpl implements IVirtualManager {
 	@Override
 	public String startVM(String name, int MemInM, int cpu, String VDI_UUID,
 			String StaticIp, String nodeType) {
+		//vmOperationManager = VMOManagerFactory.getVMOperationManager();
 		return vmOperationManager.startVM(name, MemInM, cpu, VDI_UUID, StaticIp, nodeType);
 	}
 

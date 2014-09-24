@@ -1,9 +1,14 @@
 package bupt.sc.nova.serviceImpl;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
+//import org.apache.logging.log4j.LogManager;
+//import org.apache.logging.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 
 import bupt.sc.nova.model.VRDEPort;
@@ -11,6 +16,7 @@ import bupt.sc.nova.service.VRDEPortService;
 
 @Transactional
 public class VRDEPortServiceImpl implements VRDEPortService {
+	//private final Logger logger = LogManager.getLogger(VRDEPortServiceImpl.class.getName()); 
 	private EntityManager entityManager;
 
 	public EntityManager getEntityManager() {
@@ -31,24 +37,29 @@ public class VRDEPortServiceImpl implements VRDEPortService {
 	
 	public void releasePortbyVMID(String vmid){
 		if(vmid != null){
-			Query query = entityManager.createQuery("update vrdeport SET status ='free',vmid=NULL WHERE vmid=:vmid")
+			Query query = entityManager.createQuery("update VRDEPort SET status ='free',vmid=NULL WHERE vmid=:vmid")
 					.setParameter("vmid", vmid);
 			query.executeUpdate();
 		}
 	}
 	
 	public int leasePort(){
-		Query query = entityManager.createQuery("select MIN(v.port) from vrdeport v where status='free'",VRDEPort.class);
-		VRDEPort vrde = (VRDEPort) query.getSingleResult();
-		// Unable the port
-		vrde.setStatus(VRDEPort.STATE_USED);
-		entityManager.merge(vrde);
-		return vrde.getPort();
+		TypedQuery<VRDEPort> query = entityManager.createQuery("select v from VRDEPort v where status='free'",VRDEPort.class);
+		List<VRDEPort> vrdePorts =  (List<VRDEPort>) query.getResultList();
+		if(vrdePorts.isEmpty()){
+			return -1;
+		}else {
+			VRDEPort vrde = vrdePorts.get(0);
+			// Unable the port
+			vrde.setStatus(VRDEPort.STATE_USED);
+			entityManager.merge(vrde);
+			return vrde.getPort();
+		}
 	}
 	
 	public void setPortVmid(String vmid,int vrdeport){
 		if(vrdeport != 0){
-			Query query = entityManager.createQuery("update vrdeport SET vmid=:vmid WHERE port=:port")
+			Query query = entityManager.createQuery("update VRDEPort SET vmid=:vmid WHERE port=:port")
 					.setParameter("vmid", vmid)
 					.setParameter("port", vrdeport);
 			query.executeUpdate();

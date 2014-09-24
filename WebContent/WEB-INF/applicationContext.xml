@@ -40,7 +40,11 @@
     <property name="vrdePortService" ref="vrdePortServiceImpl"></property>
     <property name="vnNodeInfoService" ref="vnNodeInfoServiceImpl"></property>
   </bean>
+  <bean id="vmoManagerFactory" class="bupt.sc.nova.vm.VMOManagerFactory" scope="prototype">
+    <lookup-method name="getVBoxManager" bean="vBoxManager"/>
+  </bean>
   <bean id="iVirtualManager" class="bupt.sc.nova.impl.IVirtualManagerImpl" scope="prototype">
+    <property name="vmoManagerFactory" ref="vmoManagerFactory"></property>
   </bean>
   <bean id="iCloudManager" class="bupt.sc.nova.impl.ICloudManagerImpl" scope="prototype">
     <property name="hmInfoServie" ref="hmInfoServiceImpl"></property>
