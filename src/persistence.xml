@@ -5,9 +5,10 @@
   <persistence-unit name="scEntityManager" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
 	    <class>bupt.sc.keystone.model.UserInfo</class>
-	    <class>bupt.sc.neutron.model.SubnetInfo</class>
 	    
-	    <class>bupt.sc.nova.model.VNodeInfo</class>
+	    <class>bupt.sc.neutron.model.SubnetInfo</class>
+	    <class>bupt.sc.neutron.model.VNodeInfo</class>
+	    
 	    <class>bupt.sc.nova.model.VRDEPort</class>
 	    <class>bupt.sc.nova.model.VNNodeInfo</class>
 	    <class>bupt.sc.nova.model.HMInfo</class>

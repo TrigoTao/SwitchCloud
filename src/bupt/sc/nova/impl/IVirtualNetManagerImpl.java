@@ -1,10 +1,7 @@
 package bupt.sc.nova.impl;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.InputStreamReader;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -24,6 +21,7 @@ import bupt.sc.utils.CloudConfig;
 import bupt.sc.utils.ConfigInstance;
 import bupt.sc.utils.CoreUtil;
 import bupt.sc.utils.SCPath;
+import bupt.sc.utils.StreamGobbler;
 
 public class IVirtualNetManagerImpl implements IVirtualNetManager{
 	private VNNodeInfoService vnNodeInfoService;
@@ -90,13 +88,14 @@ public class IVirtualNetManagerImpl implements IVirtualNetManager{
 				if (resultVMID == null)
 					logger.error("VM Created failed!");
 				else {
-					logger.info("New VM created!, VM_UUID :" + resultVMID);
+					logger.debug("New VM created!, VM_UUID :" + resultVMID);
 					// if result1 contains vrdeport info, delete it
 					resultVMID = CoreUtil.formatVMID(resultVMID);
 					logger.info("New VM created!, VM_UUID :" + resultVMID);
 	
 					// Get vdi on which it spawns
 					String resultVDIID = iVirtualManager.getVDIIDbyVMID(resultVMID);
+					logger.debug("VDIID :" + resultVDIID);
 					
 					vnNodeInfo = new VNNodeInfo();
 					// vnInfo.setSubnetId(subnetId);
@@ -111,14 +110,15 @@ public class IVirtualNetManagerImpl implements IVirtualNetManager{
 						vnNodeInfo.setState(VNNodeInfo.STATE_RUNNING);
 						
 						vnNodeInfoService.add(vnNodeInfo);
+						ipInfoService.setUseIp(vm_static_ip);
 					}
 	
 					// Start Agent
 					String home = SCPath.getHome();
 					Process p = null;
-					String line = null;
 					String vmId = resultVMID.replace("-", "");
 					try {
+						logger.debug("start "+nodeType+" Agent");
 						if (nodeType.equals("MS")) {
 							p = Runtime.getRuntime().exec(
 									home + File.separatorChar + "scripts/startAgentWin " + name + " " + hm_ip + " " + vmId + " &");
@@ -126,28 +126,17 @@ public class IVirtualNetManagerImpl implements IVirtualNetManager{
 							p = Runtime.getRuntime().exec(
 									home + File.separatorChar + "scripts/startAgent " + name + " " + hm_ip + " " + vmId + " &");
 						}
-						BufferedInputStream in = new BufferedInputStream(p.getInputStream());
-						BufferedInputStream err = new BufferedInputStream(p.getErrorStream());
-						BufferedReader inBr = new BufferedReader(new InputStreamReader(in));
-						BufferedReader errBr = new BufferedReader(new InputStreamReader(err));
-						StringBuffer buff = new StringBuffer();
-						while ((line = errBr.readLine()) != null) {
-							logger.error("[ERROR][Agent Starting] " + line);
-						}
-						while ((line = inBr.readLine()) != null) {
-							logger.info("[INFO] " + line);
-						}
-						String errorResult = buff.toString();
-	
-						if (errorResult.contains("ERROR") || errorResult.contains("error")) {
-							logger.error("[ERROR][Agent Starting] " + errorResult);
-						}
+						StreamGobbler infoStreamGobbler = new StreamGobbler(p.getInputStream(), "info", logger);
+						StreamGobbler errStreamGobbler = new StreamGobbler(p.getErrorStream(), "err", logger);
+						
+						infoStreamGobbler.start();
+						errStreamGobbler.start();
+						
 					} catch (Exception e) {
 						e.printStackTrace();
 					} finally {
 						if (p != null)
 							p.destroy();
-	
 					}
 				}
 			}

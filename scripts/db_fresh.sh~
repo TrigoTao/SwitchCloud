@@ -1,0 +1,9 @@
+#!/bin/sh -x
+USER_NAME=root
+PASSWORD=root
+mysql -u$USER_NAME -p$PASSWORD < sql/virtualNet.sql
+#mysql -u$USER_NAME -p$PASSWORD < sql/cloud.sql
+#mysql -u$USER_NAME -p$PASSWORD < sql/userinfo.sql
+mysql -u$USER_NAME -p$PASSWORD < sql/networking-backup.sql
+mysql -u$USER_NAME -p$PASSWORD < sql/vdi.sql
+mysql -u$USER_NAME -p$PASSWORD < sql/node_sysinfo.sql

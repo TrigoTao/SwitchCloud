@@ -9,8 +9,10 @@
 	 http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
 
   <bean id="userInfoServiceImpl" class="bupt.sc.keystone.serviceImpl.UserInfoServiceImpl"></bean>
+  
   <bean id="subnetInfoServiceImpl" class="bupt.sc.neutron.serviceImpl.SubnetInfoServiceImpl"></bean>
-  <bean id="vNodeInfoServiceImpl" class="bupt.sc.nova.serviceImpl.VNodeInfoServiceImpl"></bean>
+  <bean id="vNodeInfoServiceImpl" class="bupt.sc.neutron.serviceImpl.VNodeInfoServiceImpl"></bean>
+  
   <bean id="vrdePortServiceImpl" class="bupt.sc.nova.serviceImpl.VRDEPortServiceImpl"></bean>
   <bean id="vnNodeInfoServiceImpl" class="bupt.sc.nova.serviceImpl.VNNodeInfoServiceImpl"></bean>
   <bean id="hmInfoServiceImpl" class="bupt.sc.nova.serviceImpl.HMInfoServiceImpl"></bean>
@@ -30,12 +32,12 @@
     <property name="subnetInfoService" ref="subnetInfoServiceImpl"></property>
     <property name="userInfoService" ref="userInfoServiceImpl"></property>
   </bean>
-  
-  <!-- nova -->
-  <bean id="vNodeManager" class="bupt.sc.nova.impl.VNodeManagerImpl" scope="prototype">
+  <bean id="vNodeManager" class="bupt.sc.neutron.impl.VNodeManagerImpl" scope="prototype">
     <property name="vNodeInfoService" ref="vNodeInfoServiceImpl"></property>
     <property name="subnetInfoService" ref="subnetInfoServiceImpl"></property>
   </bean>
+  
+  <!-- nova -->
   <bean id="vBoxManager" class="bupt.sc.nova.vm.VBoxManager" scope="prototype">
     <property name="vrdePortService" ref="vrdePortServiceImpl"></property>
     <property name="vnNodeInfoService" ref="vnNodeInfoServiceImpl"></property>

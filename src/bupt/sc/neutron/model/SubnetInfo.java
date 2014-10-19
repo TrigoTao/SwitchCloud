@@ -14,6 +14,7 @@ import bupt.sc.keystone.model.UserInfo;
 @Entity
 public class SubnetInfo {
 	public static final Integer STATE_CREATING = 0;
+	public static final Integer STATE_READY = 1;//done
 	
 	@Id
 	@GeneratedValue

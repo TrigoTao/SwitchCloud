@@ -1,5 +1,11 @@
 package bupt.sc.neutron.impl;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,16 +15,34 @@ import javax.jws.WebService;
 import bupt.sc.keystone.model.UserInfo;
 import bupt.sc.keystone.service.UserInfoService;
 import bupt.sc.neutron.api.SubnetManager;
+import bupt.sc.neutron.api.VNodeManager;
 import bupt.sc.neutron.model.SubnetInfo;
+import bupt.sc.neutron.model.VNodeInfo;
 import bupt.sc.neutron.pojo.UserDemand;
 import bupt.sc.neutron.service.SubnetInfoService;
+import bupt.sc.neutron.service.VNodeInfoService;
+import bupt.sc.nova.model.VNNodeInfo;
+import bupt.sc.nova.service.VNNodeInfoService;
+import bupt.sc.utils.CloudConfig;
+import bupt.sc.utils.ConfigInstance;
 
 @WebService
 public class SubnetManagerImpl implements SubnetManager {
 	
+	private VNodeManager vNodeManager;
 	private SubnetInfoService subnetInfoService;
 	private UserInfoService userInfoService;
+	private VNodeInfoService vNodeInfoService;
+	private VNNodeInfoService vnNodeInfoService;
 	
+	public VNodeManager getvNodeManager() {
+		return vNodeManager;
+	}
+
+	public void setvNodeManager(VNodeManager vNodeManager) {
+		this.vNodeManager = vNodeManager;
+	}
+
 	public SubnetInfoService getSubnetInfoService() {
 		return subnetInfoService;
 	}
@@ -35,6 +59,22 @@ public class SubnetManagerImpl implements SubnetManager {
 		this.userInfoService = userInfoService;
 	}
 
+	public VNodeInfoService getvNodeInfoService() {
+		return vNodeInfoService;
+	}
+
+	public void setvNodeInfoService(VNodeInfoService vNodeInfoService) {
+		this.vNodeInfoService = vNodeInfoService;
+	}
+
+	public VNNodeInfoService getVnNodeInfoService() {
+		return vnNodeInfoService;
+	}
+
+	public void setVnNodeInfoService(VNNodeInfoService vnNodeInfoService) {
+		this.vnNodeInfoService = vnNodeInfoService;
+	}
+
 	@Override
 	public SubnetInfo checkSubnet(int subnetId) {
 		return subnetInfoService.getSubnet(subnetId);
@@ -49,22 +89,80 @@ public class SubnetManagerImpl implements SubnetManager {
 	public int createNet(String userName, UserDemand userDemand) {
 		UserInfo user = userInfoService.getUserByName(userName);
 		Date now = new Date();
-		if(null != user){
-			SubnetInfo subnetInfo = new SubnetInfo();
-			subnetInfo.setUser(user);
-			subnetInfo.setUserName(userName);
-			subnetInfo.setState(SubnetInfo.STATE_CREATING);
-			subnetInfo.setCreateTime(now);
-			subnetInfo.setModifyTime(now);
-			
-			subnetInfoService.saveSubnetInfo(subnetInfo);
-			
-			ArrayList<String> vnodeTypeList = new ArrayList<String>();
-			ArrayList<Integer> vnodeList = new ArrayList<Integer>();
-			vnodeTypeList = divideSubnet(userDemand);
-			for (String vnt : vnodeTypeList) {
-				// TODO Auto-generated method stub
+		try {
+			CloudConfig cc = ConfigInstance.getCloudConfig();
+
+			if(null != user){
+				SubnetInfo subnetInfo = new SubnetInfo();
+				subnetInfo.setUser(user);
+				subnetInfo.setUserName(userName);
+				subnetInfo.setState(SubnetInfo.STATE_CREATING);
+				subnetInfo.setCreateTime(now);
+				subnetInfo.setModifyTime(now);
+				subnetInfoService.saveSubnetInfo(subnetInfo);
+				
+				ArrayList<String> vnodeTypeList = new ArrayList<String>();
+				vnodeTypeList = divideSubnet(userDemand);
+				
+				int vnodeId = 0;
+				int caps = userDemand.getAudioCap();
+				for (String vnt : vnodeTypeList) {
+					vnodeId = vNodeManager.addVNode(vnt, subnetInfo.getId());
+					VNodeInfo vNodeInfo = vNodeInfoService.getVNode(vnodeId);
+					vNodeInfo.setSubnet(subnetInfo);
+					vNodeInfoService.saveVNodeInfo(vNodeInfo);
+					
+					if (vnt.equals("SCSCF")) {
+						VNNodeInfo vnNodeInfo = vnNodeInfoService.getVNNodeInfo(vNodeInfo.getVmid());
+						String nodeName = vnNodeInfo.getNodeName();
+						String jetty_home = cc.getScpritsHome();
+						Process p = null;
+						String line = null;
+						BufferedInputStream in = null;
+						BufferedInputStream err = null;
+						BufferedReader inBr = null;
+						BufferedReader errBr = null;
+						try {
+							p = Runtime.getRuntime().exec(jetty_home + File.separatorChar + "scripts/modifyCSCFMax " + nodeName + " " + caps);
+							in = new BufferedInputStream(p.getInputStream());
+							err = new BufferedInputStream(p.getErrorStream());
+							inBr = new BufferedReader(new InputStreamReader(in));
+							errBr = new BufferedReader(new InputStreamReader(err));
+							while ((line = errBr.readLine()) != null) {
+								System.out.println("[ERROR][CSCFServer Modifying] " + line);
+							}
+							while ((line = inBr.readLine()) != null) {
+								System.out.println("[INFO][CSCFServer Modified] " + nodeName + " " + caps + " " + line);
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						} finally {
+							if (p != null)
+								p.destroy();
+							try {
+								in.close();
+								err.close();
+								inBr.close();
+								errBr.close();
+								in = null;
+								err = null;
+								errBr = null;
+								inBr = null;
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+						caps = caps - 1500;
+					}
+				}
+				
+				subnetInfo.setState(SubnetInfo.STATE_READY);
+				subnetInfoService.saveSubnetInfo(subnetInfo);
+				
+				return subnetInfo.getId();
 			}
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
 		}
 		
 		return 0;
@@ -115,4 +213,6 @@ public class SubnetManagerImpl implements SubnetManager {
 		
 		return vnodeTypeList;
 	}
+
+	
 }

@@ -1,0 +1,2 @@
+INSERT INTO `VNVdiInfo` VALUES ('SCSCF', 'CSCF', 'cbca6792-d366-4144-a134-8427d1c2b405'); 
+INSERT INTO `VNVdiInfo` VALUES ('MS', 'MS', '15ad33a6-ebf4-46cf-bc3c-db39bd6b5162'); 

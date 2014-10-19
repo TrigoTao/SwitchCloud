@@ -8,8 +8,10 @@
 	<jaxws:endpoint id="keystoneAuth" implementor="#auth" address="/keystone/auth"/>
 	<jaxws:endpoint id="keystoneUser" implementor="#userManager" address="/keystone/user"/>
 	
+	<!-- neutron -->
+	<jaxws:endpoint id="novaNodeM" implementor="#vNodeManager" address="/neutron/vnm"/>
+	
 	<!-- nova -->
-	<jaxws:endpoint id="novaNodeM" implementor="#vNodeManager" address="/nova/vnm"/>
 	<jaxws:endpoint id="iVManager" implementor="#iVirtualManager" address="/nova/ivm"/>
 	<jaxws:endpoint id="iCManager" implementor="#iCloudManager" address="/nova/icm"/>
 	<jaxws:endpoint id="iVNManager" implementor="#iVirtualNetManager" address="/nova/ivnm"/>

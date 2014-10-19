@@ -6,9 +6,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,7 +21,11 @@ import bupt.sc.nova.model.VNNodeInfo;
 import bupt.sc.nova.service.VNNodeInfoService;
 import bupt.sc.nova.service.VRDEPortService;
 import bupt.sc.nova.statistic.VMInfo;
+import bupt.sc.utils.CloudConfig;
+import bupt.sc.utils.ConfigInstance;
 import bupt.sc.utils.SCPath;
+import bupt.sc.utils.StreamGobbler;
+import bupt.sc.utils.StreamGobblerLineDealer;
 
 
 /**
@@ -25,7 +33,7 @@ import bupt.sc.utils.SCPath;
  * 
  */
 public class VBoxManager implements VMOperationManager {
-	private final Logger logger = LogManager.getLogger(VMOperationManager.class.getName()); 
+	private final Logger logger = LogManager.getLogger(MethodHandles.lookup().lookupClass()); 
 	
 	private VRDEPortService vrdePortService;
 	private VNNodeInfoService vnNodeInfoService;
@@ -1067,7 +1075,7 @@ public class VBoxManager implements VMOperationManager {
 	}
 
 	/**
-	 * This function is added by XIEZHIWEI,To start a vm using static ip;
+	 * To start a vm using static ip;
 	 * 
 	 * @param name
 	 * @param MemInM
@@ -1096,38 +1104,67 @@ public class VBoxManager implements VMOperationManager {
 			/**
 			 * Create, Register and Start a VM
 			 */
-			logger.debug(scHome);
+			//logger.debug(scHome);
 			if (nodeType.equals("MS")) {
 				p = Runtime.getRuntime().exec(scHome + File.separatorChar + "scripts/startVMwin7 " + name + " " + MemInM + " " + cpu + " " + VDI_UUID + " " + vrdeport + " " + StaticIp);
 			} else {
 				p = Runtime.getRuntime().exec(scHome + File.separatorChar + "scripts/startVM " + name + " " + MemInM + " " + cpu + " " + VDI_UUID + " " + vrdeport + " " + StaticIp);
 			}
+//			StreamGobbler infoStreamGobbler = new StreamGobbler(p.getInputStream(), "info", logger);
+//			StreamGobbler errStreamGobbler = new StreamGobbler(p.getErrorStream(), "err", logger);
+//			
+//			infoStreamGobbler.setResultQueue(new LinkedBlockingQueue<String>()).setLineDealer(new StreamGobblerLineDealer(){
+//				public void deal(String line, BlockingQueue<String> results){
+//					if (line.contains("UUID"))	results.add(line.substring(5).trim());
+//				}
+//			});
+//			errStreamGobbler.setResultQueue(new LinkedBlockingQueue<String>()).setLineDealer(new StreamGobblerLineDealer(){
+//				public void deal(String line, BlockingQueue<String> results){
+//					if(results.isEmpty())	results.add("err occur");
+//				}
+//			});
+//			
+//			infoStreamGobbler.start();
+//			errStreamGobbler.start();
+//			
+//			vm_uuid = infoStreamGobbler.getResultQueue().take();
+			
+			boolean errorOccur = false;
 			BufferedInputStream in = new BufferedInputStream(p.getInputStream());
 			BufferedInputStream err = new BufferedInputStream(p.getErrorStream());
 			BufferedReader inBr = new BufferedReader(new InputStreamReader(in));
 			BufferedReader errBr = new BufferedReader(new InputStreamReader(err));
-			StringBuffer buff = new StringBuffer();
+			//StringBuffer buff = new StringBuffer();
+			
 			while ((line = errBr.readLine()) != null) {
-				System.out.println("[ERROR][VM Creating] " + line);
-				vrdePortService.releasePort(vrdeport);
 				// FileOperationImpl.releasePort(scHome, "vrdp.pool",
 				// vrdeport);
-				return null;
+				if(line.equals("VBoxManage: error: The guest execution service is not ready (yet)."))
+					logger.error("[IGNORE][VM Creating] " + line);
+				else {
+					logger.error("[ERROR][VM Creating] " + line);
+					errorOccur = true;
+				}
 			}
+			
 			while ((line = inBr.readLine()) != null) {
-				System.out.println("[INFO] " + line);
+				logger.info("[INFO] " + line);
 				if (line.contains("UUID")) {
 					vm_uuid = line.substring(5).trim();
 				}
-				buff.append(line);
+				//buff.append(line);
 			}
-			String result = buff.toString();
+			//String result = buff.toString();
 
-			logger.debug("----------------------");
-			if (result.contains("ERROR") || result.contains("error")) {
-				System.out.println("[ERROR][VM Creating] " + result);
-				// FileOperationImpl.releasePort(scHome, "vrdp.pool",
-				// vrdeport);
+//			logger.debug("----------------------");
+//			if (result.contains("ERROR") || result.contains("error")) {
+//				logger.error("[ERROR][VM Creating] " + result);
+//				// FileOperationImpl.releasePort(scHome, "vrdp.pool",
+//				// vrdeport);
+//				vrdePortService.releasePort(vrdeport);
+//				return null;
+//			}
+			if(errorOccur){
 				vrdePortService.releasePort(vrdeport);
 				return null;
 			}
