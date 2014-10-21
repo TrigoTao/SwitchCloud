@@ -123,8 +123,9 @@ public class IVirtualNetManagerImpl implements IVirtualNetManager{
 							p = Runtime.getRuntime().exec(
 									home + File.separatorChar + "scripts/startAgentWin " + name + " " + hm_ip + " " + vmId + " &");
 						} else {
-							p = Runtime.getRuntime().exec(
-									home + File.separatorChar + "scripts/startAgent " + name + " " + hm_ip + " " + vmId + " &");
+							logger.debug("do " + home + "scripts/startAgent");
+							p = new ProcessBuilder(home + "scripts/startAgent", name, hm_ip, vmId, "&").start();
+							//p = new ProcessBuilder("/home/jiaohuan/Desktop/TestShell/echo", "&").start();
 						}
 						StreamGobbler infoStreamGobbler = new StreamGobbler(p.getInputStream(), "info", logger);
 						StreamGobbler errStreamGobbler = new StreamGobbler(p.getErrorStream(), "err", logger);
@@ -134,9 +135,6 @@ public class IVirtualNetManagerImpl implements IVirtualNetManager{
 						
 					} catch (Exception e) {
 						e.printStackTrace();
-					} finally {
-						if (p != null)
-							p.destroy();
 					}
 				}
 			}
