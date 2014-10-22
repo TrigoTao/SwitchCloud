@@ -1,6 +1,0 @@
-#app ini config
-cloudIp: 10.108.119.165
-scpritsHome: /home/jiaohuan/iaas/
-vmType: vBox
-nodeServiceSuffix: :8080/SwitchCloud/webservices/nova/ivm
-cloudServiceSuffix: :8080/SwitchCloud/webservices/nova/icm
