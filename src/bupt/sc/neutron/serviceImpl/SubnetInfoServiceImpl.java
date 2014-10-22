@@ -27,6 +27,11 @@ public class SubnetInfoServiceImpl implements SubnetInfoService {
 	public SubnetInfo getSubnet(int subnetId) {
 		return entityManager.find(SubnetInfo.class, subnetId);
 	}
+	
+	@Override
+	public SubnetInfo getSubnetProxy(int subnetId) {
+		return entityManager.getReference(SubnetInfo.class, subnetId);
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override

@@ -12,6 +12,7 @@
   
   <bean id="subnetInfoServiceImpl" class="bupt.sc.neutron.serviceImpl.SubnetInfoServiceImpl"></bean>
   <bean id="vNodeInfoServiceImpl" class="bupt.sc.neutron.serviceImpl.VNodeInfoServiceImpl"></bean>
+  <bean id="userDemandServiceImpl" class="bupt.sc.neutron.serviceImpl.UserDemandServiceImpl"></bean>
   
   <bean id="vrdePortServiceImpl" class="bupt.sc.nova.serviceImpl.VRDEPortServiceImpl"></bean>
   <bean id="vnNodeInfoServiceImpl" class="bupt.sc.nova.serviceImpl.VNNodeInfoServiceImpl"></bean>
@@ -28,14 +29,18 @@
   </bean>
   
   <!-- neutron -->
-  <bean id="subnetManager" class="bupt.sc.neutron.impl.SubnetManagerImpl" scope="prototype">
-    <property name="subnetInfoService" ref="subnetInfoServiceImpl"></property>
-    <property name="userInfoService" ref="userInfoServiceImpl"></property>
-  </bean>
   <bean id="vNodeManager" class="bupt.sc.neutron.impl.VNodeManagerImpl" scope="prototype">
     <property name="vNodeInfoService" ref="vNodeInfoServiceImpl"></property>
     <property name="subnetInfoService" ref="subnetInfoServiceImpl"></property>
   </bean>
+  <bean id="subnetManager" class="bupt.sc.neutron.impl.SubnetManagerImpl" scope="prototype">
+    <property name="vNodeManager" ref="vNodeManager"></property>
+    <property name="subnetInfoService" ref="subnetInfoServiceImpl"></property>
+    <property name="userInfoService" ref="userInfoServiceImpl"></property>
+    <property name="vNodeInfoService" ref="vNodeInfoServiceImpl"></property>
+    <property name="vnNodeInfoService" ref="vnNodeInfoServiceImpl"></property>
+    <property name="userDemandService" ref="userDemandServiceImpl"></property>
+  </bean> 
   
   <!-- nova -->
   <bean id="vBoxManager" class="bupt.sc.nova.vm.VBoxManager" scope="prototype">

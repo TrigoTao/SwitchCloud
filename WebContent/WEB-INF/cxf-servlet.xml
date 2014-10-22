@@ -9,7 +9,8 @@
 	<jaxws:endpoint id="keystoneUser" implementor="#userManager" address="/keystone/user"/>
 	
 	<!-- neutron -->
-	<jaxws:endpoint id="novaNodeM" implementor="#vNodeManager" address="/neutron/vnm"/>
+	<jaxws:endpoint id="neutronNodeM" implementor="#vNodeManager" address="/neutron/vnm"/>
+	<jaxws:endpoint id="neutronSubnetM" implementor="#subnetManager" address="/neutron/snm"/>
 	
 	<!-- nova -->
 	<jaxws:endpoint id="iVManager" implementor="#iVirtualManager" address="/nova/ivm"/>

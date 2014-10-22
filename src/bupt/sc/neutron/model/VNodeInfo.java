@@ -10,18 +10,19 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
 /*
-+------------+-------------+------+-----+---------+----------------+
-| Field      | Type        | Null | Key | Default | Extra          |
-+------------+-------------+------+-----+---------+----------------+
-| id         | int(11)     | NO   | PRI | NULL    | auto_increment |
-| type       | varchar(10) | YES  |     | NULL    |                |
-| ipAddr     | varchar(20) | YES  |     | NULL    |                |
-| createtime | datetime    | YES  |     | NULL    |                |
-| vmid       | varchar(36) | YES  |     | NULL    |                |
-| hm_ip      | varchar(16) | YES  |     | NULL    |                |
-| subnetid   | int(11)     | YES  |     | NULL    |                |
-| state      | varchar(30) | YES  |     | NULL    |                |
-+------------+-------------+------+-----+---------+----------------+
++------------+--------------+------+-----+---------+----------------+
+| Field      | Type         | Null | Key | Default | Extra          |
++------------+--------------+------+-----+---------+----------------+
+| id         | int(11)      | NO   | PRI | NULL    | auto_increment |
+| createTime | datetime     | NO   |     | NULL    |                |
+| hmIP       | varchar(255) | YES  |     | NULL    |                |
+| ipAddr     | varchar(255) | YES  |     | NULL    |                |
+| modifyTime | datetime     | YES  |     | NULL    |                |
+| state      | int(11)      | YES  |     | NULL    |                |
+| type       | varchar(255) | YES  |     | NULL    |                |
+| vmid       | varchar(255) | YES  |     | NULL    |                |
+| subnetId   | int(11)      | YES  | MUL | NULL    |                |
++------------+--------------+------+-----+---------+----------------+
  */
 @Entity
 public class VNodeInfo {

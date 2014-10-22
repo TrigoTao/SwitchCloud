@@ -7,6 +7,7 @@ import bupt.sc.keystone.model.UserInfo;
 
 public interface UserInfoService {	
 	public boolean checkUserExist(String name, String userType);
+	public UserInfo getInfoByName(String name);
 	public UserInfo getInfoByName(String name, String userType);
 	public UserInfo getAdminByName(String name);
 	public UserInfo getUserByName(String name);

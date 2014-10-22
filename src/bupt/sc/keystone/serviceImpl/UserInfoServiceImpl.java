@@ -41,7 +41,17 @@ public class UserInfoServiceImpl implements UserInfoService{
 		} catch (NoResultException e) {
 			return null;
 		}
+	}
+	@Override
+	public UserInfo getInfoByName(String name) {
+		Query query = entityManager.createQuery("select e from UserInfo e where userName = :name")
+					.setParameter("name", name);
 		
+		try {
+			return (UserInfo)query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
 	}
 	@Override
 	public UserInfo getAdminByName(String name) {

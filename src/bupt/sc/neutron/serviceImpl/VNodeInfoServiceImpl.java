@@ -30,7 +30,7 @@ public class VNodeInfoServiceImpl implements VNodeInfoService {
 
 	@Override
 	public VNodeInfo getVNode(int vNodeId) {
-		return entityManager.getReference(VNodeInfo.class, vNodeId);
+		return entityManager.find(VNodeInfo.class, vNodeId);
 	}
 
 	@Override

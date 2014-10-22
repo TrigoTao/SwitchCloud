@@ -8,6 +8,7 @@
 	    
 	    <class>bupt.sc.neutron.model.SubnetInfo</class>
 	    <class>bupt.sc.neutron.model.VNodeInfo</class>
+	    <class>bupt.sc.neutron.model.UserDemand</class>
 	    
 	    <class>bupt.sc.nova.model.VRDEPort</class>
 	    <class>bupt.sc.nova.model.VNNodeInfo</class>
