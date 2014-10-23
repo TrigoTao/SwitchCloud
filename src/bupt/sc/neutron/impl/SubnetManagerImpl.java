@@ -179,6 +179,8 @@ public class SubnetManagerImpl implements SubnetManager {
 				subnetInfo.setState(SubnetInfo.STATE_READY);
 				subnetInfoService.saveSubnetInfo(subnetInfo);
 				
+				userDemandService.saveUserDemand(userDemand);
+				
 				return subnetInfo.getId();
 			}
 		} catch (FileNotFoundException e1) {
