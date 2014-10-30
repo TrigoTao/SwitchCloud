@@ -192,8 +192,29 @@ public class SubnetManagerImpl implements SubnetManager {
 
 	@Override
 	public boolean deleteNet(String userName, int subnetId) {
-		// TODO Auto-generated method stub
-		return false;
+		int result = 1;
+		
+		List<VNodeInfo> vNodes = vNodeInfoService.getVNodesBySubnetId(subnetId);
+		try {
+			for(VNodeInfo vNode : vNodes){
+				if( vNodeManager.deleteVNode(vNode.getId()) == false ){
+					logger.error("Release VNode id = "+ vNode.getId() +" failure!");
+					result = 0;
+				}
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		if(result != 0){
+			//subnetInfoService
+			
+//			sql = "delete from subnet where subnetId = "+ subnetId;
+			return true;
+		}	
+		else {
+			return false;
+		}
 	}
 
 	@Override
