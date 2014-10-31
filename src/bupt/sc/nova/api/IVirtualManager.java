@@ -196,7 +196,7 @@ public interface IVirtualManager {
 	/**
 	 * @param ID
 	 */
-	public void stopVM(String UUID_VM);
+	public void deleteVM(String UUID_VM);
 	
 	/**
 	 * @param ID
@@ -206,7 +206,7 @@ public interface IVirtualManager {
 	/**
 	 * to poweroff a virtual node in virtual net.
 	 */
-	public String poweroffVM(String UUID_VM);
+	public boolean poweroffVM(String UUID_VM);
 	
 	/**
 	 * to start a closed virtual node in virtual net.

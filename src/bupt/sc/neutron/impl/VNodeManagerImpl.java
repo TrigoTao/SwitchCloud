@@ -79,6 +79,8 @@ public class VNodeManagerImpl implements VNodeManager {
 
 	@Override
 	public boolean deleteVNode(int vnodeId) throws FileNotFoundException {
+		logger.debug("In ---- " + System.currentTimeMillis());
+		
 		VNodeInfo vNodeInfo = vNodeInfoService.getVNode(vnodeId);
 
 		CloudConfig cc = ConfigInstance.getCloudConfig();
@@ -93,6 +95,7 @@ public class VNodeManagerImpl implements VNodeManager {
 			logger.info("delete success!");
 		}
 		
+		logger.debug("Out ---- " + System.currentTimeMillis());
 		return iaasResult;
 	}
 

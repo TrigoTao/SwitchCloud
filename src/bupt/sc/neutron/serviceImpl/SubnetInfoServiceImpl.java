@@ -44,5 +44,14 @@ public class SubnetInfoServiceImpl implements SubnetInfoService {
 	public void saveSubnetInfo(SubnetInfo subnetInfo) {
 		if(subnetInfo.getId() !=  null) entityManager.merge(subnetInfo); else entityManager.persist(subnetInfo);
 	}
+	
+	@Override
+	public void remove(SubnetInfo subnetInfo) {
+		removeById(subnetInfo.getId());
+	}
+	@Override
+	public void removeById(int subnetInfoId) {
+		entityManager.remove( entityManager.getReference(SubnetInfo.class, subnetInfoId) );
+	}
 
 }

@@ -7,12 +7,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.lang.invoke.MethodHandles;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,11 +21,8 @@ import bupt.sc.nova.model.VNNodeInfo;
 import bupt.sc.nova.service.VNNodeInfoService;
 import bupt.sc.nova.service.VRDEPortService;
 import bupt.sc.nova.statistic.VMInfo;
-import bupt.sc.utils.CloudConfig;
-import bupt.sc.utils.ConfigInstance;
 import bupt.sc.utils.SCPath;
 import bupt.sc.utils.StreamGobbler;
-import bupt.sc.utils.StreamGobblerLineDealer;
 
 
 /**
@@ -536,7 +533,7 @@ public class VBoxManager implements VMOperationManager {
 		}
 		return type;
 	}
-
+	
 	public String getLocationbyVMID(String VM_UUID) {
 		String location = null;
 		Process process = null;
@@ -556,7 +553,8 @@ public class VBoxManager implements VMOperationManager {
 				end1 = line.indexOf(" VMs");
 				front2 = line.indexOf("VMs");
 				end2 = line.indexOf("/Snapshots");
-				location = line.substring(front1, end1) + "\\ " + line.substring(front2, end2);
+				location = line.substring(front1, end2);
+				//location = line.substring(front1, end1) + "\\ " + line.substring(front2, end2);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -1185,34 +1183,39 @@ public class VBoxManager implements VMOperationManager {
 	/**
 	 * @param ID
 	 */
-	public void stopVM(String UUID_VM) {
+	public void deleteVM(String UUID_VM) {
+		logger.debug("in ---- UUID_VM: " + UUID_VM + "\t time: " + System.currentTimeMillis());
 		String scHome = SCPath.getHome();
 		String vmid = formatVMID(UUID_VM);
-		vrdePortService.releasePortbyVMID(vmid);
+		//vrdePortService.releasePortbyVMID(vmid);
 
-		System.out.println("[INFO][Stop VM UUID: ]" + vmid);
+		logger.info("[INFO][Stop VM UUID: ]" + vmid);
 		/* Get VM's attach VDI */
 		String vdi_uuid = getVDIIDbyVMID(vmid);
 		String location = getLocationbyVMID(vmid);
 		Process p = null;
+		
+		//poweroffVM(UUID_VM);
+
+		// delete VM
+		logger.debug("vdi_uuid: " + vdi_uuid + "\t location: " + location);
 		try {
-			// stop VM
-			p = Runtime.getRuntime().exec(scHome + File.separatorChar + "scripts/stopVM " + vmid);
-			// delete VM
-			p.waitFor();
-			p = Runtime.getRuntime().exec(scHome + File.separatorChar + "scripts/deleteVM " + vmid + " " + vdi_uuid + " " + location);
+			p = new ProcessBuilder(scHome + File.separatorChar + "scripts/deleteVM", vmid, vdi_uuid, location).start();
+			StreamGobbler infoStreamGobbler = new StreamGobbler(p.getInputStream(), "info", logger);
+			StreamGobbler errStreamGobbler = new StreamGobbler(p.getErrorStream(), "err", logger);
+			infoStreamGobbler.start();
+			errStreamGobbler.start();
 			// if Children delete VDI
-			p.waitFor();
-			if (getVDIType(vdi_uuid).equals("children")) {
-				Runtime.getRuntime().exec(scHome + File.separatorChar + "scripts/deleteVDI " + vdi_uuid);
-			}
-		} catch (Exception e) {
-			System.out.println("[ERROR][Runing scripts stopVM deletVM deletVDI]");
+//				p.waitFor();
+//				if (getVDIType(vdi_uuid).equals("children")) {
+//					new ProcessBuilder(scHome + File.separatorChar + "scripts/deleteVDI", vdi_uuid).start();
+//				}
+		} catch (IOException e) {
+			logger.error("[ERROR][Runing scripts deletVM deletVDI]");
 			e.printStackTrace();
-		} finally {
-			if (p != null)
-				p.destroy();
 		}
+			
+		logger.debug("out ---- time: " + System.currentTimeMillis());
 	}
 
 	/**
@@ -1245,39 +1248,26 @@ public class VBoxManager implements VMOperationManager {
 	}
 
 	/**
-	 *to poweroff a virtual node in virtual net.
+	 *to poweroff a virtual node in virtual net. It will block!
 	 */
-	public String poweroffVM(String UUID_VM) {
-		String poweroff_result = new String();
-		poweroff_result = "success";
-		//String scHome = SCPath.getHome();
-		//scHome = "/home/jiaohuan/iaas/";
+	public boolean poweroffVM(String UUID_VM) {
 		String vmid = formatVMID(UUID_VM);
-		System.out.println("[INFO][Poweroff VM UUID: ]" + vmid);
-		Process p = null;
+		
 		try {
-
-			String[] command = { "/bin/sh", "-c", "VBoxManage controlvm " + vmid + " savestate" };
-			p = Runtime.getRuntime().exec(command);
-			BufferedInputStream err = new BufferedInputStream(p.getErrorStream());
-			BufferedReader errBr = new BufferedReader(new InputStreamReader(err));
-
-			String errInfo = null;
-			while ((errInfo = errBr.readLine()) != null) {
-				System.out.println(errInfo);
-				if (errInfo.contains("error")) {
-					return "VM was closed!";
-				}
-			}
-		} catch (Exception e) {
-			System.out.println("[ERROR] Poweroff VM errors");
-			poweroff_result = "VM was closed!";
+			Process p = new ProcessBuilder("VBoxManage", "controlvm", vmid, "poweroff").start();
+			//even when it works ok, the stream is still errStream, I think it's the VirtualBox's fault
+			//if there really is error, it is usually because the VM is already closed. So, I won't deal with it.
+			//at last, my vBox version is 4.1.12
+			StreamGobbler errStreamGobbler = new StreamGobbler(p.getErrorStream(), "err", logger);
+			errStreamGobbler.start();
+			
+			//I find it work quickly and the function is used at other place, so I want wait it to guarantee the order
+			p.waitFor(); 
+		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
-		} finally {
-			if (p != null)
-				p.destroy();
 		}
-		return poweroff_result;
+		logger.info("[Poweroff VM UUID: ]" + vmid);
+		return true;
 	}
 
 	/**
@@ -1388,18 +1378,8 @@ public class VBoxManager implements VMOperationManager {
 	}
 
 	public static void main(String[] args) {
-		VMOperationManager vmom = new VBoxManager();
-		//String vmid = "b6a66ac6-6bf8-41c5-8b37-f7601c3d0bf2";
-		//String vdiid = "c15b2c85-416c-4c5a-b199-356fd707209d";
-		// System.out.println(getCPUsbyVMID("7f200ab5-5d5b-4d68-b52e-0e6de805bbfc"));
-		// System.out.println(getVMStatbyVMID(vmid));
-		String snapshot = "Snapshot folder: /home/jiaohuan/VirtualBox VMs/node000001/Snapshots";
-		int front1 = snapshot.indexOf("/home");
-		int end1 = snapshot.indexOf(" VMs");
-		int front2 = snapshot.indexOf("VMs");
-		int end2 = snapshot.indexOf("/Snapshots");
-		System.out.println(snapshot.substring(front1, end1) + "\\ " + snapshot.substring(front2, end2));
-		// System.out.println(getVRDEportbyVMID("a1240224-0917-48f0-8078-d675b805a370"));
-		vmom.listVDIID();
+		VBoxManager vmom = new VBoxManager();
+		String vmid = "ed5c496f-deee-4cf1-8b54-dd1f5cebc944";
+		vmom.deleteVM(vmid);
 	}
 }

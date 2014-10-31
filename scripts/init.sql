@@ -1,3 +1,4 @@
+USE SwitchCloud;
 /*************************************************************
 *                            UserInfo
 *			+------+----------+-----------+----------+----+
@@ -6,7 +7,9 @@
 *			| root | root     | 0         | MANAGER  |  1 |
 *			+------+----------+-----------+----------+----+
 **************************************************************/
-insert into UserInfo(userName,pwd,userState,userType) values ("root","root",0,"MANAGER");
+/*
+ * insert into UserInfo(userName,pwd,userState,userType) values ("root","root",0,"MANAGER");
+ */
 
 /**************************************************************************
 *                             SubnetInfo
@@ -16,4 +19,4 @@ insert into UserInfo(userName,pwd,userState,userType) values ("root","root",0,"M
 *		|  1 | 2014-09-03 14:48:31 | NULL       | 1     | root     |      1 |
 *		+----+---------------------+------------+-------+----------+--------+
 **************************************************************************/
-insert into SubnetInfo(createTime,state,userName,userId) values (now(),1,"root",1);
+insert into SubnetInfo(createTime,state,userName,userId) values (now(),1,"root",2);

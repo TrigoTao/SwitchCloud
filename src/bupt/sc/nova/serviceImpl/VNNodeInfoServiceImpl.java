@@ -29,6 +29,11 @@ public class VNNodeInfoServiceImpl implements VNNodeInfoService {
 	}
 	
 	@Override
+	public void remove(VNNodeInfo vnNodeInfo) {
+		entityManager.remove( entityManager.getReference(VNNodeInfo.class, vnNodeInfo.getNodeId()) );
+	}
+	
+	@Override
 	public VNNodeInfo getVNNodeInfo(String id) {
 		return entityManager.find(VNNodeInfo.class, id);
 	}
@@ -50,4 +55,5 @@ public class VNNodeInfoServiceImpl implements VNNodeInfoService {
 		// TODO Auto-generated method stub
 		
 	}
+	
 }

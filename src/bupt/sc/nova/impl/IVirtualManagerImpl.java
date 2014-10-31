@@ -196,8 +196,8 @@ public class IVirtualManagerImpl implements IVirtualManager {
 	}
 
 	@Override
-	public void stopVM(String UUID_VM) {
-		vmOperationManager.stopVM(UUID_VM);
+	public void deleteVM(String UUID_VM) {
+		vmOperationManager.deleteVM(UUID_VM);
 	}
 
 	@Override
@@ -206,7 +206,7 @@ public class IVirtualManagerImpl implements IVirtualManager {
 	}
 
 	@Override
-	public String poweroffVM(String UUID_VM) {
+	public boolean poweroffVM(String UUID_VM) {
 		return vmOperationManager.poweroffVM(UUID_VM);
 	}
 

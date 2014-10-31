@@ -26,7 +26,15 @@ public class VNodeManagerTest {
 	public void testAddVNode() throws FileNotFoundException{
 		int res = client.addVNode("SCSCF", 0);
 		Assert.assertEquals(-1, res);
-		res = client.addVNode("SCSCF", 1);
+		res = client.addVNode("SCSCF", 2);
 		Assert.assertNotEquals(-1, res);
+	}
+	
+	//@Test
+	public void testDeleteVNode() throws FileNotFoundException{
+		boolean res = client.deleteVNode(92);
+		Assert.assertTrue(res);
+		res = client.deleteVNode(10);
+		Assert.assertFalse(res);
 	}
 }

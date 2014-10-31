@@ -142,7 +142,6 @@ public class IVirtualNetManagerImpl implements IVirtualNetManager{
 				logger.error("No available ip");
 			}
 		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		return vnNodeInfo;
@@ -150,7 +149,25 @@ public class IVirtualNetManagerImpl implements IVirtualNetManager{
 
 	@Override
 	public boolean deleteVNodeInIaaS(String vmid) {
-		// TODO Auto-generated method stub
+		try {
+			CloudConfig cc = ConfigInstance.getCloudConfig();
+			VNNodeInfo vnNodeInfo = vnNodeInfoService.getVNNodeInfo(vmid);
+			String hm_ip = vnNodeInfo != null ? vnNodeInfo.getHm_ip() : null;
+			if (hm_ip != null) {
+				String targetEendPoint = "http://" + hm_ip + cc.getNodeServiceSuffix();
+				logger.debug(targetEendPoint);
+				CoreUtil.getRemoteT(targetEendPoint, IVirtualManager.class).deleteVM(vmid);
+
+				ipInfoService.releaseIp(vnNodeInfo.getIpAddr());
+				vnNodeInfoService.remove(vnNodeInfo);
+				//dbOperation.delete("delete from node_sysinfo where vmId = '" + in0 + "'");
+				return true;
+			}else{
+				return false;
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 

@@ -41,13 +41,13 @@ public class VNodeInfoServiceImpl implements VNodeInfoService {
 	
 	@Override
 	public void deleteInfo(VNodeInfo vNodeInfo) {
-		entityManager.remove(vNodeInfo);
+		entityManager.remove( entityManager.getReference(VNodeInfo.class, vNodeInfo.getId()) );
 	}
 	
 	@Override
 	public List<VNodeInfo> getVNodesBySubnetId(int subnetId) {
 		TypedQuery<VNodeInfo> query = entityManager.createQuery("select e from VNodeInfo e where e.subnet.id=:id" , VNodeInfo.class)
-				.setParameter(":id", subnetId);
+				.setParameter("id", subnetId);
 		return query.getResultList();
 	}
 
