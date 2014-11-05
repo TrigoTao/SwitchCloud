@@ -12,9 +12,12 @@
 	    
 	    <class>bupt.sc.nova.model.VRDEPort</class>
 	    <class>bupt.sc.nova.model.VNNodeInfo</class>
-	    <class>bupt.sc.nova.model.HMInfo</class>
+	    <!-- <class>bupt.sc.nova.model.HMInfo</class> -->
 	    <class>bupt.sc.nova.model.VNVdiInfo</class>
 	    <class>bupt.sc.nova.model.IpInfo</class>
+	    
+	    <class>bupt.sc.heartbeat.model.VMInfo</class>
+	    <class>bupt.sc.heartbeat.model.HostInfo</class>
 	    <exclude-unlisted-classes>true</exclude-unlisted-classes>
 	    
 	    <properties>

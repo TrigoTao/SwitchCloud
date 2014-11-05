@@ -6,21 +6,21 @@ import java.util.List;
 
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 
+import bupt.sc.heartbeat.model.HostInfo;
+import bupt.sc.heartbeat.service.HostInfoService;
 import bupt.sc.nova.api.ICloudManager;
 import bupt.sc.nova.api.IVirtualManager;
-import bupt.sc.nova.model.HMInfo;
-import bupt.sc.nova.service.HMInfoService;
 import bupt.sc.utils.CloudConfig;
 import bupt.sc.utils.ConfigInstance;
 
 public class ICloudManagerImpl implements ICloudManager {
-	private HMInfoService hmInfoServie;
+	private HostInfoService hmInfoServie;
 
-	public HMInfoService getHmInfoServie() {
+	public HostInfoService getHmInfoServie() {
 		return hmInfoServie;
 	}
 
-	public void setHmInfoServie(HMInfoService hmInfoServie) {
+	public void setHmInfoServie(HostInfoService hmInfoServie) {
 		this.hmInfoServie = hmInfoServie;
 	}
 
@@ -82,9 +82,9 @@ public class ICloudManagerImpl implements ICloudManager {
 	@Override
 	public List<String> listHMIp() {
 		List<String> hmIPs = new ArrayList<String>();
-		List<HMInfo> hmInfos = hmInfoServie.getHMInfos();
-		for(HMInfo hmInfo : hmInfos){
-			hmIPs.add(hmInfo.getHmIp());
+		List<HostInfo> hmInfos = hmInfoServie.getHostInfos();
+		for(HostInfo hmInfo : hmInfos){
+			hmIPs.add(hmInfo.getIp());
 		}
 
 		return hmIPs;

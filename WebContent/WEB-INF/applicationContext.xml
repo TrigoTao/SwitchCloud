@@ -10,16 +10,26 @@
 
   <bean id="userInfoServiceImpl" class="bupt.sc.keystone.serviceImpl.UserInfoServiceImpl"></bean>
   
+  <bean id="hostInfoService" class="bupt.sc.heartbeat.serviceImpl.HostInfoServiceImpl"></bean>
+  <bean id="vmInfoService" class="bupt.sc.heartbeat.serviceImpl.VMInfoServiceImpl"></bean>
+  
   <bean id="subnetInfoServiceImpl" class="bupt.sc.neutron.serviceImpl.SubnetInfoServiceImpl"></bean>
   <bean id="vNodeInfoServiceImpl" class="bupt.sc.neutron.serviceImpl.VNodeInfoServiceImpl"></bean>
   <bean id="userDemandServiceImpl" class="bupt.sc.neutron.serviceImpl.UserDemandServiceImpl"></bean>
   
   <bean id="vrdePortServiceImpl" class="bupt.sc.nova.serviceImpl.VRDEPortServiceImpl"></bean>
   <bean id="vnNodeInfoServiceImpl" class="bupt.sc.nova.serviceImpl.VNNodeInfoServiceImpl"></bean>
-  <bean id="hmInfoServiceImpl" class="bupt.sc.nova.serviceImpl.HMInfoServiceImpl"></bean>
   <bean id="vnVdiInfoServiceImpl" class="bupt.sc.nova.serviceImpl.VNVdiInfoServiceImpl"></bean>
   <bean id="ipInfoServiceImpl" class="bupt.sc.nova.serviceImpl.IpInfoServiceImpl"></bean>
 
+  <!-- heartbeat -->
+  <bean id="hmhb" class = "bupt.sc.heartbeat.cloud.OnReceiveHMHB" scope="prototype">
+    <property name="hostInfoService" ref="hostInfoService"></property>
+  </bean>
+  <bean id="hminfo" class = "bupt.sc.heartbeat.cloud.OnReceiveHMINFO" scope="prototype">
+    <property name="vmInfoService" ref="vmInfoService"></property>
+  </bean>
+  
   <!-- keystone -->
   <bean id="auth" class="bupt.sc.keystone.impl.AuthenticationImpl" scope="prototype">
     <property name="userInfoService" ref="userInfoServiceImpl"></property>
@@ -54,7 +64,7 @@
     <property name="vmoManagerFactory" ref="vmoManagerFactory"></property>
   </bean>
   <bean id="iCloudManager" class="bupt.sc.nova.impl.ICloudManagerImpl" scope="prototype">
-    <property name="hmInfoServie" ref="hmInfoServiceImpl"></property>
+    <property name="hmInfoServie" ref="hostInfoService"></property>
   </bean>
   <bean id="iVirtualNetManager" class="bupt.sc.nova.impl.IVirtualNetManagerImpl" scope="prototype">
     <property name="vnNodeInfoService" ref="vnNodeInfoServiceImpl"></property>

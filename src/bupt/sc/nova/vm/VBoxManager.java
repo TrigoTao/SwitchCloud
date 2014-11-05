@@ -7,9 +7,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.lang.invoke.MethodHandles;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -546,14 +543,11 @@ public class VBoxManager implements VMOperationManager {
 			InputStreamReader input = new InputStreamReader(process.getInputStream());
 			LineNumberReader reader = new LineNumberReader(input);
 			String line = null;
-			int front1, end1;
-			int front2, end2;
+			int front, end;
 			while ((line = reader.readLine()) != null) {
-				front1 = line.indexOf("/home");
-				end1 = line.indexOf(" VMs");
-				front2 = line.indexOf("VMs");
-				end2 = line.indexOf("/Snapshots");
-				location = line.substring(front1, end2);
+				front = line.indexOf("/home");
+				end = line.indexOf("/Snapshots");
+				location = line.substring(front, end);
 				//location = line.substring(front1, end1) + "\\ " + line.substring(front2, end2);
 			}
 		} catch (IOException e) {
