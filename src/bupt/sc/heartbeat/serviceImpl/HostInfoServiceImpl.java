@@ -25,7 +25,7 @@ public class HostInfoServiceImpl implements HostInfoService {
 	@Override
 	public List<HostInfo> getInfoByIp(String Ip) {
 		return entityManager.createQuery("select e from HostInfo e where Ip = :ip", HostInfo.class)
-				.setParameter(":ip", Ip).getResultList();
+				.setParameter("ip", Ip).getResultList();
 	}
 	@Override
 	public List<HostInfo> getHostInfos() {
@@ -35,6 +35,11 @@ public class HostInfoServiceImpl implements HostInfoService {
 	@Override
 	public void save(HostInfo host) {
 		if( host.getMac() != null )  entityManager.merge(host); else entityManager.persist(host);
+	}
+	@Override
+	public void upsert(HostInfo host) {
+		HostInfo old = entityManager.getReference( HostInfo.class, host.getMac() );
+		if(old == null) entityManager.persist(host); else entityManager.merge(host);
 	}
 
 }

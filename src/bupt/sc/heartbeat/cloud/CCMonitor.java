@@ -17,7 +17,5 @@ public class CCMonitor {
 		exec.execute(new CC_HMListener());    // receive host connection
 		exec.execute(new CC_HMInfoListener()); // get vminfo
 		exec.shutdown();
-		
-		logger.info("CCMonitor end!");
 	}
 }

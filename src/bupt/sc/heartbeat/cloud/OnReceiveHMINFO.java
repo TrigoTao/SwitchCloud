@@ -8,7 +8,6 @@ import java.net.Socket;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import bupt.sc.heartbeat.model.VMInfo;
 import bupt.sc.heartbeat.service.VMInfoService;
@@ -26,10 +25,17 @@ public class OnReceiveHMINFO implements Runnable{
 	private Socket socket;
 	private String line;
 	
-	@Autowired
 	private VMInfoService vmInfoService;
 
-	public OnReceiveHMINFO(Socket socket){
+	public VMInfoService getVmInfoService() {
+		return vmInfoService;
+	}
+
+	public void setVmInfoService(VMInfoService vmInfoService) {
+		this.vmInfoService = vmInfoService;
+	}
+
+	public void setSocket(Socket socket) {
 		logger.info("[INFO] New HM VMINFO List Received from" + socket.getInetAddress());
 		this.socket = socket;
 	}

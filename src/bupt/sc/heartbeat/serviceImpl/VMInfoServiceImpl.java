@@ -27,7 +27,7 @@ public class VMInfoServiceImpl implements VMInfoService {
 
 	@Override
 	public void deleteByHmIp(String HmIp) {
-		em.createQuery("delete e from VMInfo e where hmIp = :hmIp").setParameter("hmIp", HmIp).executeUpdate();
+		em.createQuery("delete from VMInfo where hmIp = :hmIp").setParameter("hmIp", HmIp).executeUpdate();
 	}
 
 }

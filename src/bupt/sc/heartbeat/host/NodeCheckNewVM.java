@@ -10,17 +10,15 @@ import java.net.SocketTimeoutException;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import bupt.sc.heartbeat.pcInfo.PCInfo;
 import bupt.sc.heartbeat.setting.HMsetting;
 import bupt.sc.heartbeat.vm.VMIdentity;
+import bupt.sc.nova.vm.VBoxManager;
 import bupt.sc.nova.vm.VMOperationManager;
 
 
 public class NodeCheckNewVM extends Thread{
-	@Autowired
-	private VMOperationManager vmOperationManager;
+	private VMOperationManager vmOperationManager = new VBoxManager();
 	
 	private String HMIP;
 	private int refreshInterval = 1;

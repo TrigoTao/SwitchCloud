@@ -8,7 +8,6 @@ import java.net.Socket;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import bupt.sc.heartbeat.model.HostInfo;
 import bupt.sc.heartbeat.service.HostInfoService;
@@ -17,11 +16,18 @@ public class OnReceiveHMHB implements Runnable{
 	private Logger logger = LogManager.getLogger(MethodHandles.lookup().lookupClass());
 	private Socket socket;
 	
-	@Autowired
 	private HostInfoService hostInfoService;
-	
-	public OnReceiveHMHB(Socket s){
-		socket = s;
+
+	public HostInfoService getHostInfoService() {
+		return hostInfoService;
+	}
+
+	public void setHostInfoService(HostInfoService hostInfoService) {
+		this.hostInfoService = hostInfoService;
+	}
+
+	public void setSocket(Socket socket) {
+		this.socket = socket;
 	}
 	
 	/**
@@ -33,19 +39,19 @@ public class OnReceiveHMHB implements Runnable{
 		logger.info("[INFO] NEW HM HB connection established from " + hostIp);
 		try (BufferedReader in = new BufferedReader( new InputStreamReader(socket.getInputStream()) );) {
 			String line;
-			String [] hminfo = null;
-			while( (line = in.readLine()) != null ||socket!=null){
+			String [] hminfo = {};
+			while( (line = in.readLine()) != null && socket!=null){
 				logger.info("[INFO] New HM HB received from " + hostIp + " : " + line);
 				hminfo = line.split(",");
 			}
-			for( HostInfo host : hostInfoService.getInfoByIp(hostIp) ){
-				if(hminfo.length == 2){
-					host.setMac(hminfo[0]);
-					host.setIp(hminfo[1]);
-					hostInfoService.save(host);
-				}else{
-					logger.error("hminfo length = " + hminfo.length);
-				}
+			
+			if(hminfo.length == 2){
+				HostInfo host = new HostInfo();
+				host.setMac(hminfo[0]);
+				host.setIp(hminfo[1]);
+				hostInfoService.upsert(host);
+			}else{
+				logger.error("hminfo length = " + hminfo.length);
 			}
 			
 		} catch (IOException e) {

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+	 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+	 http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
+
+  <bean id="userInfoServiceImpl" class="bupt.sc.keystone.serviceImpl.UserInfoServiceImpl"></bean>
+  
+  <bean id="hostInfoService" class="bupt.sc.heartbeat.serviceImpl.HostInfoServiceImpl"></bean>
+  <bean id="vmInfoService" class="bupt.sc.heartbeat.serviceImpl.VMInfoServiceImpl"></bean>
+  
+  <bean id="subnetInfoServiceImpl" class="bupt.sc.neutron.serviceImpl.SubnetInfoServiceImpl"></bean>
+  <bean id="vNodeInfoServiceImpl" class="bupt.sc.neutron.serviceImpl.VNodeInfoServiceImpl"></bean>
+  <bean id="userDemandServiceImpl" class="bupt.sc.neutron.serviceImpl.UserDemandServiceImpl"></bean>
+  
+  <bean id="vrdePortServiceImpl" class="bupt.sc.nova.serviceImpl.VRDEPortServiceImpl"></bean>
+  <bean id="vnNodeInfoServiceImpl" class="bupt.sc.nova.serviceImpl.VNNodeInfoServiceImpl"></bean>
+  <bean id="vnVdiInfoServiceImpl" class="bupt.sc.nova.serviceImpl.VNVdiInfoServiceImpl"></bean>
+  <bean id="ipInfoServiceImpl" class="bupt.sc.nova.serviceImpl.IpInfoServiceImpl"></bean>
+
+  <!-- heartbeat -->
+  <bean id="hmhb" class = "bupt.sc.heartbeat.cloud.OnReceiveHMHB" scope="prototype">
+    <property name="hostInfoService" ref="hostInfoService"></property>
+  </bean>
+  <bean id="hminfo" class = "bupt.sc.heartbeat.cloud.OnReceiveHMINFO" scope="prototype">
+    <property name="vmInfoService" ref="vmInfoService"></property>
+  </bean>
+  
+  <!-- keystone -->
+  <bean id="auth" class="bupt.sc.keystone.impl.AuthenticationImpl" scope="prototype">
+    <property name="userInfoService" ref="userInfoServiceImpl"></property>
+  </bean>
+  <bean id="userManager" class="bupt.sc.keystone.impl.UserManagerImpl" scope="prototype">
+    <property name="userInfoService" ref="userInfoServiceImpl"></property>
+  </bean>
+  
+  <!-- neutron -->
+  <bean id="vNodeManager" class="bupt.sc.neutron.impl.VNodeManagerImpl" scope="prototype">
+    <property name="vNodeInfoService" ref="vNodeInfoServiceImpl"></property>
+    <property name="subnetInfoService" ref="subnetInfoServiceImpl"></property>
+  </bean>
+  <bean id="subnetManager" class="bupt.sc.neutron.impl.SubnetManagerImpl" scope="prototype">
+    <property name="vNodeManager" ref="vNodeManager"></property>
+    <property name="subnetInfoService" ref="subnetInfoServiceImpl"></property>
+    <property name="userInfoService" ref="userInfoServiceImpl"></property>
+    <property name="vNodeInfoService" ref="vNodeInfoServiceImpl"></property>
+    <property name="vnNodeInfoService" ref="vnNodeInfoServiceImpl"></property>
+    <property name="userDemandService" ref="userDemandServiceImpl"></property>
+  </bean> 
+  
+  <!-- nova -->
+  <bean id="vBoxManager" class="bupt.sc.nova.vm.VBoxManager" scope="prototype">
+    <property name="vrdePortService" ref="vrdePortServiceImpl"></property>
+    <property name="vnNodeInfoService" ref="vnNodeInfoServiceImpl"></property>
+  </bean>
+  <bean id="vmoManagerFactory" class="bupt.sc.nova.vm.VMOManagerFactory" scope="prototype">
+    <lookup-method name="getVBoxManager" bean="vBoxManager"/>
+  </bean>
+  <bean id="iVirtualManager" class="bupt.sc.nova.impl.IVirtualManagerImpl" scope="prototype">
+    <property name="vmoManagerFactory" ref="vmoManagerFactory"></property>
+  </bean>
+  <bean id="iCloudManager" class="bupt.sc.nova.impl.ICloudManagerImpl" scope="prototype">
+    <property name="hmInfoServie" ref="hostInfoService"></property>
+  </bean>
+  <bean id="iVirtualNetManager" class="bupt.sc.nova.impl.IVirtualNetManagerImpl" scope="prototype">
+    <property name="vnNodeInfoService" ref="vnNodeInfoServiceImpl"></property>
+    <property name="vnVdiInfoService" ref="vnVdiInfoServiceImpl"></property>
+    <property name="ipInfoService" ref="ipInfoServiceImpl"></property>
+  </bean>
+  
+<!-- database -->
+  <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
+  
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+	  <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+	  <property name="url" value="jdbc:mysql://localhost:3306/SwitchCloud"/>
+	  <property name="username" value="root"/>
+	  <property name="password" value="root"/>
+	</bean> 
+	 
+	<bean id="persistenceProvider" class="org.hibernate.ejb.HibernatePersistence"/>
+	
+  <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+	  <property name="dataSource" ref="dataSource"/>
+	  <property name="persistenceXmlLocation" value="classpath:persistence.xml"/>
+	  <property name="persistenceProvider" ref="persistenceProvider"/>
+	  <property name="persistenceUnitName" value="scEntityManager"/>
+  </bean>
+  
+  <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+    <property name="entityManagerFactory" ref="entityManagerFactory"/>
+  </bean>
+
+  <tx:annotation-driven transaction-manager="transactionManager"/>
+</beans>
